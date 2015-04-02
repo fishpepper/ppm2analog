@@ -57,7 +57,7 @@ int main(void) {
 
 	while(1){
 		//printf("INPUT : %5d %5d %5d %5d\n",ppm_data[0], ppm_data[1], ppm_data[2], ppm_data[3]);
-		printf("ADC IN: "); for(uint8_t i=0; i<8; i++) printf("%3d ",adc_data[i]); printf("\n");
+		//printf("ADC IN: "); for(uint8_t i=0; i<8; i++) printf("%3d ",adc_data[i]); printf("\n");
 		delay_ms(10);
 		ppm_to_pwm(0, 0);
 		ppm_to_pwm(1, 1);
