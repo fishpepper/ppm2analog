@@ -8,7 +8,7 @@
 MCU = atmega328p
 FORMAT = ihex
 TARGET = main
-SRC = main.c uart.c ppm.c pwm.c adc.c
+SRC = main.c uart.c ppm.c pwm.c adc.c led.c
 DEPS= 
 ASRC = 
 OPT = s

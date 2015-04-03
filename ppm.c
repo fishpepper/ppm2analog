@@ -16,6 +16,7 @@
 */
 
 #include "ppm.h"
+#include "led.h"
 #include "uart.h"
 
 //ICP1 = PORTB.0 = PPM INPUT (8)
@@ -23,6 +24,8 @@
 void ppm_init(){
 	//initialise ICP pin as input:
 	DDRB &= ~(1<<0);
+	//enable pullup (no noise in case of open input)
+	PORTB |= (1<<0);
 
 	//set up timer1
 	TCCR1A = 0; //disable pwm
@@ -34,7 +37,27 @@ void ppm_init(){
 
 	ppm_state = PPM_STATE_WAIT_FOR_SYNC;
 	ppm_channel = 0;
+	
+	ppm_detected = 0;
+}
 
+//test if there is a ppm signal on the input:
+uint8_t ppm_active(void){
+	ppm_detected = 0;
+
+	//wait some time for an active ppm signal, while doing so blink...
+	for(uint8_t i=0; i<4; i++){
+		led_toggle();
+		delay_ms(20);
+	}
+
+	if (ppm_active){
+		led_on();
+	}else{
+		led_off();
+	}
+
+	return (ppm_detected != 0);
 }
 
 
@@ -52,8 +75,12 @@ ISR(TIMER1_CAPT_vect){
 				//oh, this is a valid sync pulse!
 				ppm_state = PPM_STATE_FETCH_DATA;
 				ppm_channel = 0;
+
+				//mark as active
+				ppm_detected = 1;
 			}else{
-				//invalid sync pulse, ignore
+				//invalid sync pulse, ignore but flash the led
+				led_toggle();
 			}
 			break;
 

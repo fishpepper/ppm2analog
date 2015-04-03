@@ -16,6 +16,7 @@
 #define PPM_STATE_FETCH_DATA    1
 
 volatile uint8_t ppm_channel;
+volatile uint8_t ppm_detected;
 volatile uint8_t ppm_state;
 volatile uint16_t ppm_data[PPM_CHANNELS];
 
@@ -23,5 +24,6 @@ volatile uint16_t ww;
 
 
 void ppm_init(void);
+uint8_t ppm_active(void);
 
 #endif

@@ -37,10 +37,13 @@ void pwm_init(){
 
 	//set pwms to center:
 	for (uint8_t i=0; i<4; i++) pwm_set(i, 127);
+	pwm_set(2, 0); //throttle=0
+	
 }
 	
 
 void pwm_set(uint8_t channel, uint8_t value){
+	//printf("pwm[%d] = %d\n",channel,value);
 	switch(channel){
 		default:
 		case(0):

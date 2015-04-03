@@ -18,7 +18,9 @@
 #include "uart.h"
 #include "main.h"
 #include "ppm.h"
+#include "pwm.h"
 #include "adc.h"
+#include "led.h"
 
 //arduino pinout: http://www.jameco.com/Jameco/workshop/JamecoBuilds/arduinocircuit_fig12.jpg
 
@@ -35,19 +37,23 @@ void ppm_to_pwm(uint8_t ppm_channel, uint8_t pwm_channel){
 	//rescale from 1000..2000 -> 0..255
         input = ((input - 1000)*65) / (1000L*65/255);
 
-	printf("IN[%d] = %5d -> %3d (%d)\n",ppm_channel,ppm_data[ppm_channel],input,pwm_channel);
+	//printf("IN[%d] = %5d -> %3d (%d)\n",ppm_channel,ppm_data[ppm_channel],input,pwm_channel);
 
 	//set value:
 	pwm_set(pwm_channel, (uint8_t)input);
 }
 
 int main(void) {
+	uint8_t ppm_available=0;
+
+	led_init();
+	pwm_init();
+
 	uart_init();
 	stdout = &mystdout;
-	printf("- ppm2analog debug output -\n");
+	printf("ppm2analog\n");
  
    	ppm_init();
-	pwm_init();
 
 	//enable ints
 	sei();
@@ -55,14 +61,31 @@ int main(void) {
 	//enable adc with ints enabled
 	adc_init();
 
+	//check if there is a ppm input on start
+	if (ppm_active()){
+		//yes ppm, do not use rc toy remote sticks
+		ppm_available = 1;		
+	}else{
+		//no ppm input on startup -> grab rc toy remote sticks and use them as input
+		ppm_available = 0;
+	}
+
 	while(1){
 		//printf("INPUT : %5d %5d %5d %5d\n",ppm_data[0], ppm_data[1], ppm_data[2], ppm_data[3]);
 		//printf("ADC IN: "); for(uint8_t i=0; i<8; i++) printf("%3d ",adc_data[i]); printf("\n");
+		if (ppm_available){
+			ppm_to_pwm(0, 0);
+			ppm_to_pwm(1, 1);
+			ppm_to_pwm(2, 2);
+			ppm_to_pwm(3, 3);
+		}else{
+			pwm_set(0, adc_data[3]); //not used
+			pwm_set(1, adc_data[0]); //pitch output
+			pwm_set(2, adc_data[2]); //throttle output
+			pwm_set(3, adc_data[1]); //yaw output
+		}
+
 		delay_ms(10);
-		ppm_to_pwm(0, 0);
-		ppm_to_pwm(1, 1);
-		ppm_to_pwm(2, 2);
-		ppm_to_pwm(3, 3);
 	}
 	
 
