@@ -83,7 +83,7 @@ LDFLAGS = $(EXTMEMOPTS) $(LDMAP) $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 # Programming support using avrdude. Settings and variables.
 
-AVRDUDE_PROGRAMMER = stk500v1
+AVRDUDE_PROGRAMMER = arduino
 AVRDUDE_PORT = /dev/ttyUSB0 -b57600
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
