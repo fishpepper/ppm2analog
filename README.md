@@ -8,8 +8,7 @@ useful to drive any standard toy remote control with a ppm signal from a radio t
 * drive the ppm input with your standard radio (trainer port)
 * disconnect the trim pots connection to the controller ic on a toy remote of your choice
 * connect the controller pin with a RC low pass to the dac pin of the atmega (see below)
-* call make
-* call flash.sh (connect arduino pro min with an ftdi cable)
+* call make program (connect arduino pro min with an ftdi cable)
 * have fun ;)
 
 # lowpass filter
